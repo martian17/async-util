@@ -1,6 +1,7 @@
 //util functions
 const Events = function(){
     const eventTable = {};
+    this.eventTable = eventTable;
     this.table = eventTable;
     this.on = function(type, cb){
         if(!(type in eventTable)){
