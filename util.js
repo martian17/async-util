@@ -23,6 +23,7 @@ const Events = function(){
     };
     this.emit = function(type){
         const elist = eventTable[type] || [];
+        console.log(type,elist);
         for(let i = 0; i < elist.length; i++){
             elist[i].apply(this,[...arguments].slice(1));
         }
@@ -104,8 +105,10 @@ let Watcher = function(elem){
     
     let functable = {
         "innerText":function(){
-            let conent = metadata["innerText"];
+            let content = metadata["innerText"];
+            console.log(content,elem.innerText);
             if(content !== elem.innerText){
+                console.log("different!!!");
                 metadata["innerText"] = elem.innerText;
                 bus.emit("innerText",content);
             }
@@ -113,11 +116,8 @@ let Watcher = function(elem){
     };
     
     setInterval(()=>{
-        console.log("this better run 10 times a second");
         for(let type in bus.eventTable){
-            console.log(type);
             if(type in functable){
-                console.log("yay",type);
                 functable[type]();
             }else{
                 console.log("warning: regisered event type not present");
