@@ -3,8 +3,6 @@ const Events = function(){
     const eventTable = {};
     this.table = eventTable;
     this.on = function(type, cb){
-        if(resResult)return resResult;
-        
         if(!(type in eventTable)){
             eventTable[type] = [];
         }
@@ -114,7 +112,9 @@ let Watcher = function(elem){
     
     setInterval(()=>{
         for(let type in bus.eventTable){
+            console.log(type);
             if(type in functable){
+                console.log("yay",type);
                 functable[type]();
             }else{
                 console.log("warning: regisered event type not present");
