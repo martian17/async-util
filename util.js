@@ -70,6 +70,7 @@ let IDSPACE = function(){
 
 
 let Watcher = function(elem){
+    console.log("watching: ",elem);
     let ID = new IDSPACE();
     let bus = new Events();
     let shadowBus = new Events();//for self check funcs
