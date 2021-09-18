@@ -112,6 +112,7 @@ let Watcher = function(elem){
     };
     
     setInterval(()=>{
+        console.log("this better run 10 times a second");
         for(let type in bus.eventTable){
             console.log(type);
             if(type in functable){
