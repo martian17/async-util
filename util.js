@@ -3,7 +3,6 @@ const Events = function(){
     const eventTable = {};
     this.table = eventTable;
     this.on = function(type, cb){
-        let resResult = onRegister(type, cb);
         if(resResult)return resResult;
         
         if(!(type in eventTable)){
@@ -16,6 +15,9 @@ const Events = function(){
                 l.splice(l.indexOf(cb),1);//garbage collection
                 if(l.length === 0){
                     delete eventTable[type];
+                    return true;//all listeners removed
+                }else{
+                    return false;
                 }
             }
         }
@@ -26,7 +28,6 @@ const Events = function(){
             elist[i].apply(this,[...arguments].slice(1));
         }
     };
-    this.onRegister = (type,cb)=>{return false};
 };
 
 
@@ -65,36 +66,37 @@ let IDSPACE = function(){
         return (id++)+"";
     }
 };
-let ID = new IDSPACE();
+
+
+
 
 
 let Watcher = function(elem){
+    let ID = new IDSPACE();
     let bus = new Events();
+    let shadowBus = new Events();//for self check funcs
     let selfCheckFuncs = {};
-    bus.resResult = function(type,cb){
+    this.on = function(type,cb){
         if(typeof type === "function"){
             if(!("__id" in type)){
                 let id = ID.new();
-                selfCheckFuncs[id] = [type,[]];
+                selfCheckFuncs[id] = type;
                 type._id = id;
             }
-            let section = selfCheckFuncs[type._id];
-            section[1].push(cb);
+            let id = type._id;
+            let remover = shadowBus.on(id,cb);
             return {
                 remove:function(){
-                    section[1].splice(section[1].indexOf(cb),1);//garbage collection
-                    if(section[1].length === 0){
-                        //delete the type as well
-                        delete selfCheckFuncs[type._id];
+                    if(remover.remove()){//all listeners removed
+                        delete selfCheckFuncs[id];
                         delete type._id;
                     }
                 }
-            }
+            };
         }else{
-            return false;
+            return bus.on(type,cb);
         }
     };
-    this.on = bus.on.bind(bus);
     
     let metadata = {
         "innerText":""
@@ -119,11 +121,9 @@ let Watcher = function(elem){
             }
         }
         for(id in selfCheckFuncs){
-            let section = selfCheckFuncs[id];
-            if(section[0](elem)){
-                section[1].map(cb=>cb(elem));
+            if(selfCheckFuncs[id](elem)){
+                shadowBus.emit(id);
             }
         }
     },100);//every 100ms
-    this.on = bus.on.bind(bus);
 };
