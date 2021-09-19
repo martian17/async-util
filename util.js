@@ -9,6 +9,9 @@ const Events = function(){
         }
         eventTable[type].push(cb);
         return {
+            fire:function(){
+                cb.apply(arguments);
+            },
             remove:function(){
                 let l = eventTable[type];
                 l.splice(l.indexOf(cb),1);//garbage collection
@@ -60,6 +63,8 @@ let Pause = function(t){
     });
 };
 
+
+
 let IDSPACE = function(){
     let id = 0;
     this.new = function(){
@@ -87,6 +92,9 @@ let Watcher = function(elem){
             let id = type._id;
             let remover = shadowBus.on(id,cb);
             return {
+                fire:function(){
+                    cb.apply(arguments);
+                },
                 remove:function(){
                     if(remover.remove()){//all listeners removed
                         delete selfCheckFuncs[id];
