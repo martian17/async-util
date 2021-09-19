@@ -168,4 +168,29 @@ let SyncedInterval = function(t){
     };
 };
 
+
+
+let WaitRelease = function(waitable){
+    let releaser;
+    this.wait = function(){
+        return new Promise((res,rej)=>{
+            if(!waitable){
+                res();
+            }else{
+                releaser = res;
+            }
+        });
+    };
+    this.release = function(){
+        if(releaser)releaser();
+        releaser = null;
+    };
+    this.setWait = function(){
+        waitable = true;
+    };
+    this.setUnWait = function(){
+        waitable = false;
+    };
+};
+
 //test change 1
