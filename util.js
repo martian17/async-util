@@ -142,7 +142,7 @@ let SyncedInterval = function(t){
             }
         };
     };
-    let stop = false;
+    let stop = true;
     let main = function(){
         cbs.map(cb=>cb());
         if(!stop)setTimeout(main,t);
