@@ -132,4 +132,32 @@ let Watcher = function(elem){
 };
 
 
+let SyncedInterval = function(t){
+    let cbs = [];
+    this.set = function(cb){
+        cbs.push(cb);
+        return {
+            cancel:function(){
+                cbs.splice(cbs.indexOf(cb),1);
+            }
+        };
+    };
+    let stop = false;
+    let main = function(){
+        cbs.map(cb=>cb());
+        if(!stop)setTimeout(main,t);
+    };
+    this.stop = function(){
+        stop = true;
+    };
+    this.start = function(){
+        if(stop){
+            stop = false;
+            main();
+        }else{
+            console.log("the timeout loop has already been started");
+        }
+    };
+};
+
 //test change 1
