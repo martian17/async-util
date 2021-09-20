@@ -1,8 +1,8 @@
 //util functions
 const Events = function(){
+    let that = this;
     const eventTable = {};
     this.eventTable = eventTable;
-    this.table = eventTable;
     this.on = function(type, cb){
         if(!(type in eventTable)){
             eventTable[type] = [];
@@ -30,6 +30,14 @@ const Events = function(){
         for(let i = 0; i < elist.length; i++){
             elist[i].apply(this,[...arguments].slice(1));
         }
+    };
+    this.wait = function(type){
+        return new Promise((res,rej)=>{
+            let ev = that.on(type,(val)=>{
+                res(val);
+                ev.remove();
+            });
+        });
     };
 };
 
