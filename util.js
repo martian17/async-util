@@ -201,4 +201,27 @@ let WaitRelease = function(waitable){
     };
 };
 
-//test change 1
+
+//animation stuff
+let Animation = function(){
+    let queue = [];
+    this.nextFrame = function(){
+        return new Promise((req,res)=>{
+            queue.push(req);
+        });
+    }
+    
+    this.pause = false;
+    let start = 0;
+    let mainLoop = function(t){
+        if(start === 0)start = t;
+        let dt = t - start;
+        start = t;
+        this.t = t;
+        this.dt = dt;
+        queue.map(q=>q(dt));
+        queue = [];//freeing the old queue basically
+        if(!this.pause)requestAnimationFrame(mainLoop);
+    };
+    requestAnimationFrame(mainLoop);
+};
