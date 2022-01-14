@@ -72,28 +72,42 @@ let Pause = function(t){
 };
 
 
+//kinda sketch but works
 class Pauser{
     pausing = false;
-    resolvers = [];
+    callstack = [];
+    waitcb;
     constructor(){
-        
+        //does nothing
     }
     wait(){
+        let args = [... arguments];
         if(!this.pausing){
-            return Promise.resolve();
+            return Promise.resolve(args);
         }
         let that = this;
         return new Promise((res,rej)=>{
-            that.resolvers.push(res);
+            that.callstack.push({res,args});
+            if(that.waitcb){
+                that.waitcb();//call the resolver only once
+                that.waitcb = null;
+            }
         });
     }
-    pause(){
+    async pause(){
         this.pausing = true;
+        let that = this;
+        await new Promise((res,rej)=>{
+            that.waitcb = res;
+        });
+        console.log(this.callstack);
+        return this.callstack[0].args;
     }
     resume(){
+        let args = [...arguments];
         this.pausing = false;
-        this.resolvers.map(r=>r());
-        this.resolvers = [];
+        this.callstack.map(({res})=>res(args));
+        this.callstack = [];
     }
 };
 
