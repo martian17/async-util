@@ -91,6 +91,7 @@ class Pauser{
         this.pausing = true;
     }
     resume(){
+        this.pausing = false;
         this.resolvers.map(r=>r());
         this.resolvers = [];
     }
