@@ -72,6 +72,31 @@ let Pause = function(t){
 };
 
 
+class Pauser{
+    pausing = false;
+    resolvers = [];
+    constructor(){
+        
+    }
+    wait(){
+        if(!this.pausing){
+            return Promise.resolve();
+        }
+        let that = this;
+        return new Promise((res,rej)=>{
+            that.resolvers.push(res);
+        });
+    }
+    pause(){
+        this.pausing = true;
+    }
+    resume(){
+        this.resolvers.map(r=>r());
+        this.resolvers = [];
+    }
+};
+
+
 
 let IDSPACE = function(){
     let id = 0;
