@@ -100,7 +100,6 @@ class Pauser{
         await new Promise((res,rej)=>{
             that.waitcb = res;
         });
-        console.log(this.callstack);
         return this.callstack[0].args;
     }
     resume(){
