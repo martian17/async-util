@@ -26,7 +26,6 @@ const Events = function(){
     };
     this.emit = function(type){
         const elist = eventTable[type] || [];
-        console.log(type,elist);
         for(let i = 0; i < elist.length; i++){
             elist[i].apply(this,[...arguments].slice(1));
         }
